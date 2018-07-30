@@ -24,6 +24,8 @@
 #include <pthread.h>
 
 #define MAP_SIZE      0x10000
+#define DEBUG_BRIDGE_BASE 0x0080010000UL
+#define DEBUG_BRIDGE_DEVICE "/dev/mem"
 
 typedef struct {
   uint32_t  length_offset;
@@ -216,7 +218,7 @@ int main(int argc, char **argv) {
          return 1;
       }
 
-   fd_uio = open("/dev/uio0", O_RDWR );
+   fd_uio = open(DEBUG_BRIDGE_DEVICE, O_RDWR );
    if (fd_uio < 1) {
       fprintf(stderr,"Failed to Open UIO Device\n");
       return -1;
@@ -230,7 +232,7 @@ int main(int argc, char **argv) {
    }
 
    volatile jtag_t* ptr = (volatile jtag_t*) mmap(NULL, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED,
-					fd_uio, 0);
+					fd_uio, DEBUG_BRIDGE_BASE);
    if (ptr == MAP_FAILED)
 				fprintf(stderr, "MMAP Failed\n");   
         
